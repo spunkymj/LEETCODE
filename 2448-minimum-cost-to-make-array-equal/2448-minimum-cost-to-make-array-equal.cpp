@@ -1,36 +1,35 @@
+#define ll long long
 class Solution {
 public:
+    //dynamic programming 
     long long minCost(vector<int>& nums, vector<int>& cost) {
-        long long totalcost=0;
-        long long sum=0;
-        long long mini=1e18;
-        vector<pair<long long , long long>> v;
-        for(int i=0 ; i<nums.size() ; i++){
-            totalcost+=((long long)nums[i]*(long long)cost[i]);
-            sum+=(long long)cost[i];
-            v.push_back({(long long)nums[i],(long long)cost[i]});
-        }
+        int n=nums.size();
+        vector<pair<int,int>> v;
+        for(int i=0 ; i<n ; i++){
+            v.push_back({nums[i],cost[i]});
+        }    
         sort(v.begin(),v.end());
-        long long prev=0;
-        long long ts=totalcost;
-        long long c=sum;
 
-        //   for i=k : C1(xk-x1)+C2(xk-x2)+...+Ck(xk-xk)+Ck+1(xk+1-xk)+....Cn(xn-xk)
-        //   or it could be written as
-        //   total cost = (-C1x1-C2x2....+Ckxk+....Cnxn)-xk(-C1-C2...+Ck+ ...+Cn)
-        //   Observe pattern for consecutive i's.
-        //   i=0 total cost=  (+C1x1+C2x2.....Cnxn)-x1(+C1+C2....+Cn)
-        //   i=1 total cost=  (-C1x1+C2x2.....Cnxn)-x2(-C1+C2....+Cn)
-        //   i=2 total cost=  (-C1x1-C2x2+C3x3.....Cnxn)-x3(-C1-C2+C3....+Cn)
-        for(int i=0 ; i<v.size() ; i++){
-            int num=v[i].first;
-            totalcost=ts-num*(sum);
-            if(totalcost<mini){
-                mini=totalcost;
-            }
-            sum-=2*v[i].second;
-            ts-=2*num*v[i].second;
+        //left cost : making elements in left equal to right
+        vector<ll> cost_l(n,0);
+        ll curr=0;
+        for(int i=0 ; i<n-1 ; i++){
+            curr+=(ll)v[i].second;
+            cost_l[i+1]=cost_l[i]+curr*(ll)(v[i+1].first-v[i].first);
         }
-        return mini;
+
+        //right cost
+        vector<ll> cost_r(n,0);
+        curr=0;
+        for(int i=n-1 ;i>0 ; i--){
+            curr+=(ll)v[i].second;
+            cost_r[i-1]=cost_r[i]+curr*(ll)(v[i].first-v[i-1].first);
+        }
+
+        ll ans=cost_l[0]+cost_r[0];
+        for(int i=1 ; i<n ; i++){
+            ans=min(ans,cost_l[i]+cost_r[i]);
+        }
+        return ans;
     }
 };
