@@ -6,19 +6,22 @@ public:
         for(auto &e : rods){
             sum+=e;
         }
-        unordered_map<int,int> dp;
+        vector<int> dp(sum+1,-1);
         dp[0]=0;
+
         for(int i=0 ; i<n ; i++){
-            unordered_map<int,int> new_dp=dp;
-            for(auto &[x,y] : dp){
-                    int longer=y;
-                    int shorter=y-x;
-                    int diff=x;
-                new_dp[diff+rods[i]]=max(max(new_dp[diff+rods[i]],0),longer+rods[i]);
-                   
-                    
-                    int newDiff=abs(shorter+rods[i]-longer);
-             new_dp[newDiff]=max(max(new_dp[newDiff],0),max(shorter+rods[i],longer));
+            vector<int> new_dp=dp;
+            for(int j=0 ; j<=sum-rods[i] ; j++){
+                if(dp[j]<0){
+                    continue;
+                }
+                int longer=dp[j];
+                int shorter=dp[j]-j;
+
+                new_dp[j+rods[i]]=max(new_dp[j+rods[i]],longer+rods[i]);
+
+                int newdiff=abs(shorter+rods[i]-longer);
+                new_dp[newdiff]=max(new_dp[newdiff],max(longer,shorter+rods[i]));
                     
             }
             dp=new_dp;
