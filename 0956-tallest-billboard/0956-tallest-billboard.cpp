@@ -1,15 +1,7 @@
 class Solution {
 public:
-    int tallestBillboard(vector<int>& rods) {
-        int n=rods.size();
-        int sum=0;
-        for(auto &e : rods){
-            sum+=e;
-        }
-        vector<int> dp(sum+1,-1);
-        dp[0]=0;
-
-        for(int i=0 ; i<n ; i++){
+    void solve(vector<int>& rods,vector<int> &dp,int l,int r,int sum){
+        for(int i=l ; i<=r ; i++){
             vector<int> new_dp=dp;
             for(int j=0 ; j<=sum-rods[i] ; j++){
                 if(dp[j]<0){
@@ -26,6 +18,33 @@ public:
             }
             dp=new_dp;
         }
-        return dp[0];
+    }
+
+    int tallestBillboard(vector<int>& rods) {
+        int n=rods.size();
+        int leftsum=0;
+        int rightsum=0;
+        int mid=n/2;
+        for(int i=0 ; i<=mid ; i++){
+            leftsum+=rods[i];
+        }
+        
+        for(int i=mid+1; i<n ; i++){
+            rightsum+=rods[i];
+        }
+        vector<int> dp1(leftsum+2,-1);
+        dp1[0]=0;
+        vector<int> dp2(rightsum+2,-1);
+        dp2[0]=0;
+
+        solve(rods,dp1,0,mid,leftsum);
+        solve(rods,dp2,mid+1,n-1,rightsum);
+        int ans=0;
+        for(int i=0 ; i<=min(leftsum,rightsum) ; i++){
+            if(dp1[i]!=-1 && dp2[i]!=-1){
+                ans=max(ans,dp1[i]+(dp2[i]-i));
+            }
+        }
+        return ans;
     }
 };
