@@ -3,6 +3,9 @@ public:
     int mod=1e9+7;
     
     int solve(vector<int>& locations, int start, int finish, int fuel,vector<vector<int>> &dp){
+        if(abs(locations[start]-locations[finish])>fuel){
+            return 0;
+        }
         if(dp[start][fuel]!=-1){
             return dp[start][fuel];
         }
