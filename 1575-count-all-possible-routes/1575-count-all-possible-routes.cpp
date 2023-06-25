@@ -1,42 +1,34 @@
 class Solution {
 public:
     int mod=1e9+7;
-    
-    int solve(vector<int>& locations, int start, int finish, int fuel,vector<vector<int>> &dp){
-        if(dp[start][fuel]!=-1){
-            return dp[start][fuel];
-        }
-        if(start==finish){
-            int ans2=1;
-            for(int i=0 ; i<locations.size() ; i++){
-                if(i==start){
+
+    int countRoutes(vector<int>& l, int start, int finish, int fuel) {
+        int n=l.size();
+        vector<vector<int>> dp(n,vector<int>(fuel+1,0));
+        dp[start][fuel]=1;
+        for(int f=fuel ; f>=0 ; f--){
+            for(int i=0 ; i<n ; i++){
+                if(!dp[i][f] || abs(l[i]-l[finish])>f){
                     continue;
                 }
-                int reduce=abs(locations[i]-locations[start]);
-                if(reduce<=fuel){
-                    ans2+=solve(locations,i,finish,fuel-reduce,dp);
-                    ans2=ans2%mod;
+                for(int j=0 ; j<n ; j++){
+                    int d=abs(l[j]-l[i]);
+                    if(i==j || (d>f)){
+                        continue;
+                    }
+                    
+                    dp[j][f-d]+=dp[i][f];
+                    dp[j][f-d]%=mod;
                 }
             }
-            return dp[start][fuel]=ans2;
         }
+
         int ans=0;
-        for(int i=0 ; i<locations.size() ; i++){
-            if(i==start){
-                continue;
-            }
-            int reduce=abs(locations[i]-locations[start]);
-            if(reduce<=fuel){
-                ans+=solve(locations,i,finish,fuel-reduce,dp);
-                ans=ans%mod;
-            }
+        for(int f=0 ; f<=fuel ; f++){
+            ans+=dp[finish][f];
+            ans=ans%mod;
         }
 
-        return dp[start][fuel]=ans;
-    }
-
-    int countRoutes(vector<int>& locations, int start, int finish, int fuel) {
-        vector<vector<int>> dp(locations.size(),vector<int>(fuel+1,-1));
-        return solve(locations,start,finish,fuel,dp);
+        return ans;
     }
 };
