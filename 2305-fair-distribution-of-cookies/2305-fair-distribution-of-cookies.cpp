@@ -1,44 +1,38 @@
 class Solution {
 public:
-    bool poss(vector<int>& cookies, int k,int target,int curr,int state){
-        if(state==((1<<cookies.size())-1)){
-            k--;
-            return k>=0;
+    //We have k groups
+    //For each cookie we have k options
+
+    //Two optimizations :
+    //1.If number of cookies left < number of empty partions,it's not a valid distribution
+    //2.If we already have a partion with value > sum/k (avg) then it's not optimal to add new value(cookie) to it.
+
+    int solve(vector<int>& cookies, int &k,vector<int> &dis,int idx,int zero,int &avg){
+        if(idx==cookies.size()){
+            return *max_element(dis.begin(),dis.end());
         }
-        bool chk=false;
-        for(int i=0 ; i<cookies.size() ; i++){
-            if((state&(1<<i))==0){
-                if(curr+cookies[i]<=target){
-                    chk|=poss(cookies,k,target,curr+cookies[i],state|(1<<i));
-                    if(chk){
-                        return chk;
-                    }
-                }
-                else if(cookies[i]<=target){
-                    chk|=poss(cookies,k-1,target,cookies[i],state|(1<<i));
-                    if(chk){
-                        return chk;
-                    }
-                }
-            }
+
+        if(cookies.size()-idx < zero){
+            return INT_MAX;
         }
-        return chk;
-    }
-    
-    int distributeCookies(vector<int>& cookies, int k) {
-        int l=1 ; 
-        int r=accumulate(cookies.begin(),cookies.end(),0);
-        int ans;
-        while(l<=r){
-            int mid=l+((r-l)/2);
-            if(poss(cookies,k,mid,0,0)){
-                ans=mid;
-                r=mid-1;
+
+        int ans=INT_MAX;
+        for(int i=0 ; i<k ; i++){
+            if(dis[i]>=avg){
+                continue;
             }
-            else{
-                l=mid+1;
-            }
+            zero-=dis[i]==0 ? 1 : 0;
+            dis[i]+=cookies[idx];
+            ans=min(ans,solve(cookies,k,dis,idx+1,zero,avg));
+            dis[i]-=cookies[idx];
+            zero+=dis[i]==0 ? 1 : 0;
         }
         return ans;
+    }
+
+    int distributeCookies(vector<int>& cookies, int k) {
+        vector<int> dis(k,0);
+        int avg=accumulate(cookies.begin(),cookies.end(),0)/k;
+        return solve(cookies,k,dis,0,k,avg);
     }
 };
