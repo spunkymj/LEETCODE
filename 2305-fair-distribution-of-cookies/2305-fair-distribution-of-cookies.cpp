@@ -10,9 +10,15 @@ public:
             if((state&(1<<i))==0){
                 if(curr+cookies[i]<=target){
                     chk|=poss(cookies,k,target,curr+cookies[i],state|(1<<i));
+                    if(chk){
+                        return chk;
+                    }
                 }
                 else if(cookies[i]<=target){
                     chk|=poss(cookies,k-1,target,cookies[i],state|(1<<i));
+                    if(chk){
+                        return chk;
+                    }
                 }
             }
         }
