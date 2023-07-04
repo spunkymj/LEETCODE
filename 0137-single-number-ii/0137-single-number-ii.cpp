@@ -1,15 +1,40 @@
 class Solution {
 public:
     int singleNumber(vector<int>& nums) {
-        sort(nums.begin(),nums.end());
-        for(int i=0 ; i<nums.size()-1 ; i++){
-            if((nums[i]^nums[i+1])==0){
-                i+=2;
+        vector<int> bitpos(32,0),bitneg(32,0);
+        for(int i=0 ; i<nums.size() ; i++){
+            if(nums[i]>=0){
+                for(int j=0 ; j<32 ; j++){
+                    if(nums[i]&(1<<j)){
+                        bitpos[j]++;
+                    }
+                }
             }
             else{
-                return nums[i];
+                for(int j=0 ; j<32 ; j++){
+                    if(nums[i]&(1<<j)){
+                        bitneg[j]++;
+                    }
+                }
             }
         }
-        return nums[nums.size()-1];
+        
+        long long ans=0;
+        bool neg=false;
+        for(int i=0 ; i<32 ; i++){
+            if(bitpos[i]%3==0 && bitneg[i]%3==0){
+                continue;
+            }
+            else{
+                if(bitneg[i]%3!=0){
+                    neg=true;
+                    ans+=(1<<i);
+                }
+                else{
+                    ans+=(1<<i);
+                }
+            }
+        }
+        return ans;
     }
 };
