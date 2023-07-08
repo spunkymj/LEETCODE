@@ -13,6 +13,7 @@ public:
                 }
                 ans=max(ans,j-i);
             }
+            j=i-1;
         }
         return ans==0?-1 : ans;
     }
