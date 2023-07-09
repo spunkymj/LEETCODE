@@ -47,13 +47,13 @@ class SGTree_lazy{
     }
 
     //partial overlap
-    int mid=low+((high-low)/2);
+    long long mid=low+((high-low)/2);
     update(2*idx+1,low,mid,l,r,val);
     update(2*idx+2,mid+1,high,l,r,val);
     seg[idx]=(seg[2*idx+1]+seg[2*idx+2]);
   }
 
-  int query(long long idx,long long low,long long high , int l,int r){
+  long long query(long long idx,long long low,long long high , int l,int r){
     //lazy propagation
     if(lazy[idx]!=0){
       seg[idx]+=(high-low+1)*lazy[idx];
@@ -75,10 +75,10 @@ class SGTree_lazy{
     }
 
     //partial overlap
-    int mid=low+((high-low)/2);
-    int left=query(2*idx+1,low,mid,l,r);
-    int right=query(2*idx+2,mid+1,high,l,r);
-      
+    long long mid=low+((high-low)/2);
+    long long left=query(2*idx+1,low,mid,l,r);
+    long long right=query(2*idx+2,mid+1,high,l,r);
+
     return (left+right);
   }
 };
@@ -89,6 +89,10 @@ public:
         int n=nums.size();
         SGTree_lazy sg(n);
         sg.build(0,0,n-1,nums);
+        long long sum=sg.query(0,0,(n-1),0,n-1);
+        if((sum%k)!=0){
+            return false;
+        }
         for(int i=0 ; i<n ; i++){
             int curr=sg.query(0,0,n-1,i,i);
             if(curr<0){
