@@ -62,19 +62,54 @@ public:
         for (int x : nums){
             score.push_back(primeScore(x));
         }
+
+        vector<int> nextGreater(n,0);
+        vector<int> prevGreater(n,0);
+
+        //next greater
+        stack<int> st;
+        for(int i=n-1 ; i>=0 ; i--){
+            while(!st.empty() && score[st.top()]<=score[i]){
+                st.pop();
+            }
+            if(st.empty()){
+                nextGreater[i]=n;
+            }
+            else{
+                nextGreater[i]=st.top();
+            }
+            st.push(i);
+        }
+        while(!st.empty()){
+            st.pop();
+        }
+
+        //prev greater
+        for(int i=0 ; i<n ; i++){
+            while(!st.empty() && score[st.top()]<score[i]){
+                st.pop();
+            }
+            if(st.empty()){
+                prevGreater[i]=-1;
+            }
+            else{
+                prevGreater[i]=st.top();
+            }
+            st.push(i);
+        }
+
         for (int id : ids) {
-            int i = id, j = id;
-            while (i > 0 && score[i - 1] < score[id])
-                --i;
-            while (j < n && score[j] <= score[id])
-                ++j;
-            
-            long long take = min(k, (id - i + 1) * (j - id));
+            int i = prevGreater[id], j = nextGreater[id];
+
+            long long take = min(k, (id - i) * (j - id));
             k -= take;
+
             res = (res *pow(nums[id], take, mod)) % mod;
+
             if (k == 0)
                 break;
         }
+
         return res;
     }
 };
