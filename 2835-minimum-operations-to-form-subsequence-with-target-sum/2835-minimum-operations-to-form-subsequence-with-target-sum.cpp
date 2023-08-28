@@ -1,36 +1,28 @@
 class Solution {
 public:
     int minOperations(vector<int>& nums, int target) {
-        vector<int> c(32,0);
-        long long sum=0;
-        for(int e : nums){
-            sum+=e;
-            c[log2(e)]++;
-        }
+        long long sum=accumulate(nums.begin(),nums.end(),(long long)0);
         if(sum<target){
             return -1;
         }
-        
         int op=0;
-        int idx=0;
-        while(idx<31){
-            if((1<<idx)&target){
-                if(c[idx]>0){
-                    c[idx]--;
-                }
-                else{
-                    while(idx<31 && c[idx]==0){
-                        op++;
-                        idx++;
-                    }
-                    c[idx]--;
-                    continue;
-                }
+        sort(nums.begin(),nums.end());
+        while(target>0){
+            long long curr=nums.back();
+            nums.pop_back();
+            if(sum-curr>=target){
+                sum-=curr;
             }
-            c[idx+1]+=c[idx]/2;
-            idx++;
+            else if(curr<=target){
+                target-=curr;
+                sum-=curr;
+            }
+            else{
+                nums.push_back(curr/2);
+                nums.push_back(curr/2);
+                op++;
+            }
         }
-
         return op;
     }
 };
