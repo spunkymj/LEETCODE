@@ -16,9 +16,7 @@ public:
                 prefix++;
             }
             prefix%=mod;
-            if(mp.find((prefix-k+mod)%mod)!=mp.end()){
-                ans+=mp[(prefix-k+mod)%mod];
-            }
+            ans+=mp[(prefix-k+mod)%mod];
             mp[prefix]++;
         }
         return ans;
