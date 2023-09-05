@@ -17,29 +17,34 @@ public:
 class Solution {
 public:
     Node* copyRandomList(Node* head) {
-        unordered_map<Node*,int> mp1;
-        unordered_map<int,Node*> mp2;
+        //Interleaving new and old linked list  (old1->new1->old2->new2-> ......)
         Node* curr=head;
-        int id=1;
         while(curr!=NULL){
-            mp2[id]=new Node(curr->val);
-            mp1[curr]=id;
-            id++;
-            curr=curr->next;
+            Node* nxt=curr->next;
+            curr->next=new Node(curr->val);
+            curr->next->next=nxt;
+            curr=curr->next->next;
         }
+        
+        //Attaching random pointers
         curr=head;
-        id=1;
         while(curr!=NULL){
-            mp2[id]->next=mp2[mp1[curr->next]];
             if(curr->random){
-                mp2[id]->random=mp2[mp1[curr->random]];
+                curr->next->random=curr->random->next;
             }
-            else{
-                mp2[id]->random=NULL;
-            }
-            id++;
+            curr=curr->next->next;
+        }
+        
+        //Restoring old and new Linked List
+        curr=head;
+        Node* new_head=new Node(0);
+        Node* cpy=new_head;
+        while(curr!=NULL){
+            cpy->next=curr->next;
+            cpy=cpy->next;
+            curr->next=curr->next->next;
             curr=curr->next;
         }
-        return mp2[1];
+        return new_head->next;
     }
 };
