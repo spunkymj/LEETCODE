@@ -1,20 +1,29 @@
 class Solution {
 public:
     int shortestSubarray(vector<int>& nums, int k) {
-        set<pair<long long,int>> st;
         int n=nums.size();
-        long long prefix=0;
-        int ans=1e9;
+        
+        //prefix array 
+        vector<long long> p(n+1,0);
         for(int i=0 ; i<n ; i++){
-            prefix+=nums[i];
-            st.insert({prefix,i});
-            while(!st.empty() && prefix-st.begin()->first>=k){
-                ans=min(ans,i-st.begin()->second);
-                st.erase(st.begin());
+            p[i+1]+=p[i]+nums[i];
+        }
+
+        
+        deque<int> q;
+        int ans=1e9;
+        q.push_back(0);
+        for(int i=1 ; i<=n ; i++){
+            //Calculating minimum possible ans
+            while(!q.empty() && p[i]-p[q.front()]>=k){
+                ans=min(ans,i-q.front());
+                q.pop_front();
             }
-            if(prefix>=k){
-                ans=min(ans,i+1);
+            //removing unnecessary elements
+            while(!q.empty() && p[i]<p[q.back()]){
+                q.pop_back();
             }
+            q.push_back(i);
         }
         return ans==1e9 ? -1 : ans;
     }
