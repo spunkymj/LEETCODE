@@ -1,29 +1,18 @@
 class Solution {
 public:
-    long long solve(int idx,vector<int>& nums, int target,vector<vector<long long>> &dp){
-        if(target==0){
-            return 1;
-        }
-        if(idx==nums.size()){
-            return 0;
-        }
-
-        if(dp[idx][target]!=-1){
-            return dp[idx][target];
-        }
-
-        long long comb=0;
-        for(int i=idx ; i<nums.size() ; i++){
-            if(nums[i]<=target){
-                comb+=solve(0,nums,target-nums[i],dp);
+    int combinationSum4(vector<int>& nums, int t) {
+        int n=nums.size();
+        sort(nums.begin(),nums.end());
+        vector<long long> dp(t+1,0);
+        dp[0]=1;
+        for(int target=0 ; target<=t ; target++){
+            for(int idx=0 ; idx<n && nums[idx]<=target ; idx++){
+                dp[target]+=dp[target-nums[idx]];
+                if(dp[target]>INT_MAX){
+                    dp[target]=INT_MAX;
+                }
             }
         }
-        return dp[idx][target]=comb;
-    }
-
-    int combinationSum4(vector<int>& nums, int target) {
-        int n=nums.size();
-        vector<vector<long long>> dp(n,vector<long long>(target+1,-1));
-        return solve(0,nums,target,dp);
+        return dp[t];
     }
 };
