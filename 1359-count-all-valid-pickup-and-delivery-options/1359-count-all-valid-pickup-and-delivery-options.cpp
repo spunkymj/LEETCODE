@@ -48,10 +48,7 @@ public:
     int countOrders(int n) {
         processFact();
         ll ans=fac[2*n];
-        for(int i=0 ; i<n ; i++){
-            ans*=invfac[2];
-            ans%=mod;
-        }
+        ans*=binpow(invfac[2],n);
         return ans%mod;
     }
 };
