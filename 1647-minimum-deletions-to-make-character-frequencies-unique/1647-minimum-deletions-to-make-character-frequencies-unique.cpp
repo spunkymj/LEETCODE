@@ -1,35 +1,48 @@
 class Solution {
 public:
     int minDeletions(string s) {
-       vector<int> c(26,0);
-       for(auto e:s){
-           c[e-'a']++;
-       } 
-       unordered_map<int,int> mp;
-       int ans=0;
-       sort(c.begin(),c.end());
-       for(int i=0 ; i<26 ; i++){
-           if(c[i]==0){
-               continue;
-           }
-           if(mp[c[i]]==0){
-               mp[c[i]]++;
-               continue;
-           }
-           else{
-                int curr=c[i];
-                while(mp[curr]!=0){
-                    curr--;
+        vector<int> c(26,0);
+        for(auto e:s){
+            c[e-'a']++;
+        } 
+        unordered_map<int,int> mp;
+        int st=0;
+        for(int i=0  ;i<26 ; i++){
+            mp[c[i]]++;
+            st=max(st,c[i]);
+        }
+        
+        priority_queue<pair<int,int>> pq;
+
+        int ans=0;
+        for(int val=st ; val>=1 ; val--){
+            if(mp[val]==0){
+                if(!pq.empty()){
+                    int maxi=pq.top().first;
+                    int cnt=pq.top().second;
+                    pq.pop();
+                    ans+=maxi-val;
+                    cnt--;
+                    if(cnt>0){
+                        pq.push({maxi,cnt});
+                    }
                 }
-                if(curr!=0){
-                    mp[curr]++;
-                    ans+=c[i]-curr;
-                }
-                else{
-                    ans+=c[i];
-                }
-           }
-       }
-       return ans;
+            }
+            else if(mp[val]>1){
+                pq.push({val,mp[val]-1});
+            }
+        }
+        while(!pq.empty()){
+            int maxi=pq.top().first;
+            int cnt=pq.top().second;
+            pq.pop();
+            ans+=maxi;
+            cnt--;
+            if(cnt>0){
+                pq.push({maxi,cnt});
+            }
+        }
+        
+        return ans;
     }
 };
