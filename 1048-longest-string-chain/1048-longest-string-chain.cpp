@@ -35,9 +35,6 @@ public:
                 maxi=dp[idx];
             }
         }
-        for(auto c : dp){
-            cout<<c<<endl;
-        }
         return maxi;
     }
 };
