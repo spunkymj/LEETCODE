@@ -1,18 +1,14 @@
 class Solution {
 public:
     char findTheDifference(string s, string t) {
-        vector<int> c(26,0);
+        int sum1=0;
+        int sum2=0;
         for(auto e : t){
-            c[e-'a']++;
+            sum1+=(e-'a');
         }
         for(auto e : s){
-            c[e-'a']--;
+            sum2+=(e-'a');
         }
-        for(int i=0 ; i<26 ; i++){
-            if(c[i]==1){
-                return 'a'+i;
-            }
-        }
-        return 'a';
+        return ('a'+(sum1-sum2));
     }
 };
